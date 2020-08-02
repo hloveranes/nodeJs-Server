@@ -9,6 +9,7 @@ const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 // Import routes
 const authRoute = require('./routes/auth');
+const postRoute = require('./routes/posts');
 
 
 // start env
@@ -23,8 +24,8 @@ mongoose.connect(process.env.DB_CONNECTION, { useNewUrlParser: true, useUnifiedT
 app.use(express.json());
 
 // Route Middleware
-// app.get('/', (req, res) => res.send('Hello World'));
 app.use('/api/user', authRoute);
+app.use('/api/posts', postRoute);
 
 // This app starts a server and listens on port 3000 for connections.
 app.listen(port, () => console.log(`app listening at http://localhost:${port}`));
