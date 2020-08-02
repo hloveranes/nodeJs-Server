@@ -1,11 +1,12 @@
 const router = require('express').Router();
 const User = require('../model/User');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const { registerValidation, loginValidation } = require('../validation.js');
 
 // const value = await Promise.all([schema.validateAsync(req.body)]);
 
-router.get('/all', async (req, res) => {
+router.get('/list-users', async (req, res) => {
     try {
         const allUser = await User.find();
         res.status(200).json({ data: allUser })
@@ -44,16 +45,19 @@ router.post('/login', async (req, res) => {
 
         // check if email exist
         const user = await User.findOne({ email: req.body.email });
-        if (!user) return res.status(400).json('Email or password is wrong!');
+        if (!user) return res.status(400).json({ message: 'Email or password is wrong!' });
 
         // validate password
         const validPass = await bcrypt.compare(req.body.password, user.password);
-        if (!validPass) return res.status(400).json('Invalid password!');
+        if (!validPass) return res.status(400).json({ message: 'Invalid password!' });
 
-        res.status(200).json('Logged in success!');
+        // create and assign a token
+        const token = await jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET);
+        res.status(200).json({ token });
+
         // res.send('Logged in success!');
     } catch (err) {
-        res.status(500).json('Logged unsuccessful');
+        res.status(500).json({ err });
     }
 
 });
