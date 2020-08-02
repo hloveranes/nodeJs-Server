@@ -9,7 +9,7 @@ Credit to the Owner :)
 ## <h2>Promise</h2>
     promise object represents the eventual completion (or failure) of an asynchronous operation, and its resulting value
     To send all requests at the same time a Promise.all() is required
-    _states:_
+    >states:
         pending: initial state, neither fulfilled nor rejected.
         fulfilled: meaning that the operation completed successfully.
         rejected: meaning that the operation failed.
