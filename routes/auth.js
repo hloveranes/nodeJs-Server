@@ -28,10 +28,35 @@ router.post('/register', (req, res) => {
                         email: req.body.email,
                         password: hashedPassword
                     });
-                    user.save().then(savedUser => { res.status(200).json({ data: savedUser }) }).catch(err => res.status(500).json(err));
+                    user.save().then(savedUser => { res.status(200).json({ user: user._id }) }).catch(err => res.status(500).json(err));
                 }).catch(err => { res.status(500).json(err); })
             }).catch(err => { res.status(500).json(err); })
         }).catch(err => { res.status(500).json(err); })
     }).catch(err => { res.status(400).json(err.details[0].message); })
 });
+
+
+router.post('/login', async (req, res) => {
+    // Validate the data for user
+    try {
+        const { error } = loginValidation(req.body);
+        if (error) return res.status(400).json(error.details[0].message);
+
+        // check if email exist
+        const user = await User.findOne({ email: req.body.email });
+        if (!user) return res.status(400).json('Email or password is wrong!');
+        const validPass = await bcrypt.compare(req.body.password, user.password);
+        // validate password
+        if (!validPass) return res.status(400).json('Invalid password!');
+        res.status(200).json('Logged in success!');
+
+        // res.send('Logged in success!');
+    } catch (err) {
+        console.log(err);
+    }
+
+});
+
+
+
 module.exports = router;
